@@ -13,7 +13,7 @@ namespace XF.Atividade_2
 		{
 			InitializeComponent();
 
-			MainPage = new XF.Atividade_2.MainPage();
+            MainPage = new NavigationPage(new View.AlunoView());
 		}
 
 		protected override void OnStart ()
