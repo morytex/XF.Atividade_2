@@ -4,19 +4,30 @@ using System.Linq;
 using System.Text;
 
 using Xamarin.Forms;
+using XF.Atividade_2.ViewModel;
 
 namespace XF.Atividade_2
 {
 	public partial class App : Application
 	{
-		public App ()
-		{
-			InitializeComponent();
+        #region ViewModels
+        public static AlunoViewModel AlunoVM { get; set; }
+        #endregion
 
-            MainPage = new NavigationPage(new View.AlunoView());
+        public App ()
+		{
+            InitializeComponent();
+            InitializeApplication();
+
+            MainPage = new NavigationPage(new View.AlunoView() { BindingContext = App.AlunoVM });
 		}
 
-		protected override void OnStart ()
+        private void InitializeApplication()
+        {
+            if (AlunoVM == null) AlunoVM = new AlunoViewModel();
+        }
+
+        protected override void OnStart ()
 		{
 			// Handle when your app starts
 		}

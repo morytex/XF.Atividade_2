@@ -1,56 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Windows.Input;
+using Xamarin.Forms;
 using XF.Atividade_2.Model;
+using XF.Atividade_2.View;
 
 namespace XF.Atividade_2.ViewModel
 {
-    public class AlunoViewModel
+    public class AlunoViewModel : INotifyPropertyChanged
     {
         #region Propriedades
-        public String RM { get; set; }
-        public String Nome { get; set; }
-        public String Email { get; set; }
+        public Aluno AlunoModel { get; set; }
+        public ObservableCollection<Aluno> Alunos { get; set; } = new ObservableCollection<Aluno>();
+
+        // UI Events
+        public OnAdicionarAlunoCMD OnAdicionarAlunoCMD { get; }
+        public ICommand OnNovoCMD { get; private set; }
+        public ICommand OnSairCMD { get; private set; }
         #endregion
 
-        public AlunoViewModel(Aluno aluno)
+        public AlunoViewModel()
         {
-            this.RM = aluno.RM;
-            this.Nome = aluno.Nome;
-            this.Email = aluno.Email;
+            AlunoModel = new Aluno();
+            OnAdicionarAlunoCMD = new OnAdicionarAlunoCMD(this);
+            OnSairCMD = new Command(OnSair);
+            OnNovoCMD = new Command(OnNovo);
         }
 
-        public static Aluno GetAluno()
+        public void Adicionar(Aluno paramAluno)
         {
-            return new Aluno()
+            try
             {
-                Id = Guid.NewGuid(),
-                RM = "123456",
-                Nome = "Aluno Teste",
-                Email = "alunoteste@fiap.com"
-            };
+                if (paramAluno == null)
+                    throw new Exception("Usuário inválido");
+
+                paramAluno.Id = Guid.NewGuid();
+                Alunos.Add(paramAluno);
+                App.Current.MainPage.Navigation.PopAsync();
+            }
+            catch (Exception)
+            {
+                App.Current.MainPage.DisplayAlert("Falhou", "Desculpe, ocorreu um erro inesperado =(", "OK");
+            }
         }
 
-        public static List<Aluno> GetAlunos()
+        private async void OnSair()
         {
-            List<Aluno> alunos = new List<Aluno>();
-            alunos.Add(new Aluno()
-            {
-                Id = Guid.NewGuid(),
-                RM = "123456",
-                Nome = "Aluno Teste 1",
-                Email = "alunoteste1@fiap.com"
-            });
+            await App.Current.MainPage.Navigation.PopAsync();
+        }
 
-            alunos.Add(new Aluno()
-            {
-                Id = Guid.NewGuid(),
-                RM = "654321",
-                Nome = "Aluno Teste 2",
-                Email = "alunoteste2@fiap.com"
-            });
+        private async void OnNovo()
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new NovoAlunoView() { BindingContext = App.AlunoVM });
+        }
 
-            return alunos;
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void EventPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+
+    public class OnAdicionarAlunoCMD : ICommand
+    {
+        private AlunoViewModel alunoVM;
+        public OnAdicionarAlunoCMD(AlunoViewModel paramVM)
+        {
+            alunoVM = paramVM;
+        }
+        public event EventHandler CanExecuteChanged;
+        public void DeleteCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        public bool CanExecute(object parameter)
+        {
+            if (parameter != null) return true;
+
+            return false;
+        }
+        public void Execute(object parameter)
+        {
+            alunoVM.Adicionar(parameter as Aluno);
         }
     }
 }
