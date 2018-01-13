@@ -15,19 +15,18 @@ namespace XF.Atividade_2.ViewModel
     {
         #region Propriedades
         public Aluno AlunoModel { get; set; }
-        public ObservableCollection<Aluno> Alunos { get; set; } = new ObservableCollection<Aluno>();
+        public ObservableCollection<Aluno> Alunos { get; set; }
 
         // UI Events
         public OnAdicionarAlunoCMD OnAdicionarAlunoCMD { get; }
         public ICommand OnNovoCMD { get; private set; }
-        public ICommand OnSairCMD { get; private set; }
         #endregion
 
         public AlunoViewModel()
         {
             AlunoModel = new Aluno();
+            Alunos = new ObservableCollection<Aluno>();
             OnAdicionarAlunoCMD = new OnAdicionarAlunoCMD(this);
-            OnSairCMD = new Command(OnSair);
             OnNovoCMD = new Command(OnNovo);
         }
 
@@ -46,11 +45,6 @@ namespace XF.Atividade_2.ViewModel
             {
                 App.Current.MainPage.DisplayAlert("Falhou", "Desculpe, ocorreu um erro inesperado =(", "OK");
             }
-        }
-
-        private async void OnSair()
-        {
-            await App.Current.MainPage.Navigation.PopAsync();
         }
 
         private async void OnNovo()

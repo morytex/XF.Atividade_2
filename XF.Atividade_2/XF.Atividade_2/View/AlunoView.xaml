@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="XF.Atividade_2.View.AlunoView">
+             x:Class="XF.Atividade_2.View.AlunoView"
+             Title="Alunos">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Adicionar" x:Name="btnAddAluno" Command="{Binding OnNovoCMD}" Order="Primary" Priority="1" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <StackLayout Padding="20">
-            <Label Text="Alunos" Font="18" />
             <ListView x:Name="lstAlunos" ItemsSource="{Binding Alunos}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
